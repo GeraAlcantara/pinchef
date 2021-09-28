@@ -4,6 +4,71 @@ from enum import Enum
 from typing import List, Optional
 from pydantic import BaseModel
 
+
+class BaseItem(BaseModel):
+    description: str
+    type: str
+class Item(BaseModel):
+    name: str
+    description: str
+
+class CarItem(BaseItem):
+    type = "car"
+
+
+class PlaneItem(BaseItem):
+    type = "plane"
+
+
+class UserBase(BaseModel):
+    username: str
+    email: EmailStr
+    full_name: Optional[str] = None
+
+
+class UserIn(UserBase):
+    password: str
+
+
+class UserOut(UserBase):
+    pass
+
+
+class UserInDB(UserBase):
+    hashed_password: str
+
+
+def fake_password_hasher(raw_password: str) -> str:
+    return "supersecret" + raw_password
+
+
+def fake_save_user(user_in: UserIn):
+    hashed_password = fake_password_hasher(user_in.password)
+    user_in_db = UserInDB(**user_in.dict(), hashed_password=hashed_password)
+    print("User saved!  .not really  ", user_in_db)
+    return user_in_db
+
+items = [
+    {"name": "Foo", "description": "There comes my hero"},
+    {"name": "Red", "description": "It's my aeroplane"},
+]
+
+@app.post("/user/", response_model=UserOut)
+def create_user(user_in: UserIn):
+    user_saved = fake_save_user(user_in)
+    return user_saved
+
+
+@app.get("/items/", response_model=List[Item])
+async def read_item():
+    return items
+
+
+@app.get('/')
+async def root():
+    return {"message": "Que onda BANDA!"}
+
+
 class Item(BaseModel):
     name: str
     description: Optional[str] = None
@@ -158,3 +223,46 @@ async def read_user_me():
 async def read_user(user_id: str):
     return {'user_id': user_id}
 
+
+
+app = FastAPI()
+
+@app.get("/")
+async def main():
+    content = """
+<body>
+<form action="/files/" enctype="multipart/form-data" method="post">
+<input name="files" type="file" multiple>
+<input type="submit">
+</form>
+<form action="/uploadfiles/" enctype="multipart/form-data" method="post">
+<input name="files" type="file" multiple>
+<input type="submit">
+</form>
+</body>
+    """
+    return HTMLResponse(content=content)
+
+# @app.get("/")
+# def read_root():
+#     return {"Saludo 👋": "Que onda banda como andan 🤩"}
+
+
+@app.post("/login/")
+async def login(username: str = Form(...), password: str = Form(...)):
+    return { "username": username }
+
+
+@app.post("/files/")
+async def create_file(
+    file: bytes = File(...), fileb: UploadFile = File(...), token: str = Form(...)
+    ):
+    return {
+        "file_sizes": len(file),
+        "token": token,
+        "fileb_content_type": fileb.content_type,
+    }
+
+@app.post("/uploadfiles/")
+async def create_upload_file(files: List[UploadFile] = File(...)):
+    return {"filenames": [file.filename for file in files]}
