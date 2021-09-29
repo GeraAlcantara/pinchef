@@ -10,6 +10,7 @@ pydantic = {extras = ["email"], version = "*"}
 python-multipart = "*"
 python-jose = {extras = ["cryptography"], version = "*"}
 passlib = {extras = ["bcrypt"], version = "*"}
+sqlalchemy = "*"
 
 [dev-packages]
 pylint = "*"
