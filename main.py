@@ -1,76 +1,83 @@
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.exceptions import RequestValidationError
-from fastapi.responses import PlainTextResponse, JSONResponse
-from starlette.exceptions import HTTPException as StarletteHTTPException
+from typing import Optional
+
+from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from pydantic import BaseModel
 
 
-class UnicornException(Exception):
-    def __init__(self, name: str):
-        self.name = name
 
-
+fake_users_db = {
+    "johndoe": {
+        "username": "johndoe",
+        "full_name": "John Doe",
+        "email": "johndoe@example.com",
+        "hashed_password": "fakehashedsecret",
+        "disabled": False,
+    },
+    "alice": {
+        "username": "alice",
+        "full_name": "Alice Wonderson",
+        "email": "alice@example.com",
+        "hashed_password": "fakehashedsecret2",
+        "disabled": True,
+    },
+}
 app = FastAPI()
 
-
-@app.exception_handler(StarletteHTTPException)
-async def http_exception_handler(request, exc):
-    return PlainTextResponse(str(exc.detail), status_code=exc.status_code)
+def fake_hash_password(password: str):
+    return "fakehashed" + password
 
 
-@app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request, exc):
-    return PlainTextResponse(str(exc), status_code=400)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+class User(BaseModel):
+    username: str
+    email: Optional[str] = None
+    full_name: Optional[str] = None
+    disabled: Optional[bool] = None
 
-@app.exception_handler(UnicornException)
-async def unicorn_exception_handler(request: Request, exc: UnicornException):
-    return JSONResponse(
-        status_code=418,
-        content={
-            "message": f"Oops! La 💩 {exc.name} hizo algo. Ahy te va un arcoiris...🌈"
-        }
-    )
+class UserInDB(User):
+    hashed_password: str
 
+def get_user(db, username: str):
+    if username in db:
+        user_dict = db[username]
+        return UserInDB(**user_dict)
 
-@app.get("/items/{item_id}")
-async def read_item(item_id: int):
-    if item_id == 3:
+def fake_decoder_token(token):
+    # This doesn't provide any security at all
+    # Check the next version
+    user = get_user(fake_users_db, token)
+    return user
+
+async def get_current_user(token: str = Depends(OAuth2PasswordBearer)):
+    user = fake_decoder_token(token)
+    if not user:
         raise HTTPException(
-            status_code=418, detail="Nope!😒 No me gusta el numero 3")
-    return {"item_id": item_id}
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return user
+
+async def get_current_active_user(current_user: User = Depends(get_current_user)):
+    if current_user.disabled:
+        raise HTTPException(status_code=400, detail="Inactive user")
+    return current_user
 
 
-@app.get("/unicorns/{name}")
-async def read_unicorn(name: str):
-    """
-# Un regalo Magico 
-Si pides un 🦄 en la ruta del get
-optienes un arcoiris 
- """
-    if name == "🦄":
-        raise UnicornException(name)
-    return {"unicorn": name}
-
-items = {"foo": "the foo fighters"}
-
-error = {
-    'en': 'Item not found 💥',
-    'es': 'Cosa no encontrada 🕵️‍♀️',
-    '👾': 'X-Error',
-}
+@app.post("/token")
+async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    user_dict = fake_users_db.get(form_data.username)
+    if not user_dict:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+    user = UserInDB(**user_dict)
+    hashed_password = fake_hash_password(form_data.password)
+    if not hashed_password == user.hashed_password:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+    return {"access_token": user.username, "token_type": "bearer"}
 
 
-# @app.get("/items/{item_id}")
-# async def read_item(item_id: str):
-#     """
-#     This function is used to get the item from the items dictionary.
-#     # Manejo de Errores
-#     - HTTPException
-#      """
-#     if item_id not in items:
-#         raise HTTPException(
-#             status_code=404,
-#             detail=error,
-#             headers={"X-Error": "There goes my error "},
-#         )
-#     return {"item": items[item_id]}
+@app.get("/users/me")
+async def read_items(curent_user: User = Depends(get_current_active_user)):
+    return curent_user
