@@ -1,14 +1,8 @@
-import os
-from dotenv import load_dotenv
-from sqlalchemy import create_engine, engine
+from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-# read env variables
-# load_dotenv()
-# SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI")
-
-SQLALCHEMY_DATABASE_URI = 'sqlite:///./pinchef.db'
+SQLALCHEMY_DATABASE_URI = 'sqlite:///./sql_app.db'
 
 # the argument is needed only for SQLite. It's not needed for other databases.
 engine = create_engine(SQLALCHEMY_DATABASE_URI, connect_args={'check_same_thread': False}) 

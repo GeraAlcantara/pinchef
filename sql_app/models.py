@@ -8,14 +8,10 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
-    hased_password = Column(String)
+    hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
 
     items = relationship("Item", back_populates="owner")
-
-    def __repr__(self):
-        return "<User(email='%s')>" % self.email
-    
 
 class Item(Base):
     __tablename__ = "items"
@@ -26,4 +22,3 @@ class Item(Base):
     owner_id = Column(Integer, ForeignKey("users.id"))
 
     owner = relationship("User", back_populates="items")
-    
