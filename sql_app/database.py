@@ -1,8 +1,13 @@
+import os
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-SQLALCHEMY_DATABASE_URI = 'sqlite:///./sql_app.db'
+# read .env file
+load_dotenv()
+SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI")
+
 
 # the argument is needed only for SQLite. It's not needed for other databases.
 engine = create_engine(SQLALCHEMY_DATABASE_URI, connect_args={'check_same_thread': False}) 
