@@ -12,6 +12,8 @@ python-jose = {extras = ["cryptography"], version = "*"}
 passlib = {extras = ["bcrypt"], version = "*"}
 sqlalchemy = "*"
 alembic = "*"
+psycopg2 = "*"
+python-dotenv = "*"
 
 [dev-packages]
 pylint = "*"
