@@ -10,7 +10,7 @@ from app.schemas import schemas
 
 from app.config.db import SessionLocal, engine
 
-# models.Base.metadata.create_all(bind=engine)
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
