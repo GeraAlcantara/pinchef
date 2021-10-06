@@ -44,6 +44,72 @@ En base de tus compras puede sugerirte recetas que te puedan interesar ya que na
 
 Generar un menu para la semana de desayuno, comida y cena basado en un presupuesto limitado.
 
+# Install & Run
+
+Primero clonamos el repositorio ya sea en la terminal o en el boton Code.
+    
+```bash
+git clone https://github.com/GeraAlcantara/pinchef.git
+cd pinchef
+```
+
+## Modificar el archivo de configuracion .env 
+Tenemos que renombrar el archivo modify_me.env a .env y modificar los valores de las variables remomoviendo los `{}`.
+
+Terminal 
+
+```bash
+mv modify_me.env .env
+```
+
+## Dockers
+Debemos tener instalado docker y docker-compose.
+
+Terminal 
+    
+```bash
+sudo apt-get update
+sudo apt-get install docker.io
+sudo apt-get install docker-compose
+sudo usermod -aG docker $USER
+```
+
+## Build 
+
+```bash
+docker-compose build
+```
+
+## Run 
+
+```bash
+docker-compose up
+```
+
+## Correr el app sin Dockers
+
+Debemos crear un virtual env y instalar las dependencias.
+Utilizamos venv para crear el virtual env. 
+
+La variable de SQLALCHEMY_DATABASE_URL se debe de cambiar a una base de datos SQLite.
+
+`SQLALCHEMY_DATABASE_URL= sqlite:///./pinchef.db`
+
+Para poder correrla localmente sin necesidad de una Posgres database.
+    
+    
+```bash
+virtualenv -p python3 venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+Y para correr el app.
+ 
+    
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+    
 
 # Docker
 Primero que nada se debe buildear, y para ello lo hacemos de la siguiente manera ubicados en la raiz del proyecto
