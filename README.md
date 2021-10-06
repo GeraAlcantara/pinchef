@@ -45,6 +45,15 @@ En base de tus compras puede sugerirte recetas que te puedan interesar ya que na
 Generar un menu para la semana de desayuno, comida y cena basado en un presupuesto limitado.
 
 
+# Docker
+Primero que nada se debe buildear, y para ello lo hacemos de la siguiente manera ubicados en la raiz del proyecto
+```sh
+docker build -t <tag> .
+```
+Posterior a la construccion de la imagen ya queda 
+```sh
+docker run -d -p 80:80 <myimage> --env SQLALCHEMY_DATABASE_URL=<URL> <tag>
+```
 # TODOS
 
 ## Estructura app
