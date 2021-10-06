@@ -54,6 +54,27 @@ Posterior a la construccion de la imagen ya queda
 ```sh
 docker run -d -p 80:80 <myimage> --env SQLALCHEMY_DATABASE_URL=<URL> <tag>
 ```
+
+### Easy way
+> **NOTA:** Solo disponible para bash
+
+> **NOTA 2:** Para preparar la ejecucion del archivo hace falta que tenga permisos de ejecutable, para eso hace falta ejecutar el siguiente comando `chmod +x ./rundocker.sh`
+
+Haciendo uso del script `rundocker.sh` y pasando los parametros se puede correr de una manera mas sencilla la construccion de la imagen docker, las opciones con las que el script cuenta, son:
+
+```plaintext
+-h, --help                                show brief help
+-b, --build                               build docker image
+-r, --run                                 run docker image
+-a <NAME_APP>, --app <NAME_APP>           specify a name of run container (like as Tag)
+-s <URL>, --sql-alchemy <URL>             specify a url for Enviroment variable to excecute success
+```
+
+Un ejemplo de su uso es el siguiente:
+```bash
+./rundocker.sh --app pinchef-image:latest -b -r -s http://localhost:3344
+```
+
 # TODOS
 
 ## Estructura app
