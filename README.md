@@ -49,7 +49,7 @@ Generar un menu para la semana de desayuno, comida y cena basado en un presupues
 Primero clonamos el repositorio ya sea en la terminal o en el boton Code.
     
 ```bash
-git clone https://github.com/SergioRibera/pinchef.git
+git clone https://github.com/GeraAlcantara/pinchef.git
 cd pinchef
 ```
 
