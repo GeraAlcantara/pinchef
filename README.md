@@ -90,6 +90,10 @@ docker-compose up
 
 Debemos crear un virtual env y instalar las dependencias.
 Utilizamos venv para crear el virtual env. 
+
+La variable de SQLALCHEMY_DATABASE_URL se debe de cambiar a una base de datos SQLite.
+
+`SQLALCHEMY_DATABASE_URL= sqlite:///./pinchef.db`
     
     
 ```bash
