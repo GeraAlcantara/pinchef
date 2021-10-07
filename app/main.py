@@ -4,13 +4,12 @@ from sqlalchemy.orm import Session
 
 from . import crud
 
-from app.models import models
 from app.schemas import schemas
 
 
-from app.config.db import SessionLocal, engine
+from app.config.db import Base, SessionLocal, engine
 
-models.Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
