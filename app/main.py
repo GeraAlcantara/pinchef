@@ -2,6 +2,8 @@ from typing import List
 from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session
 
+from app.models import models
+
 from . import crud
 
 from app.schemas import schemas
@@ -9,7 +11,8 @@ from app.schemas import schemas
 
 from app.config.db import Base, SessionLocal, engine
 
-Base.metadata.create_all(bind=engine)
+
+# models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
