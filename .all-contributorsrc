@@ -1,0 +1,24 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "SergioRibera",
+      "name": "Sergio Alejandro Ribera Costa",
+      "avatar_url": "https://avatars.githubusercontent.com/u/56278796?v=4",
+      "profile": "https://sergioribera.com/",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "pinchef",
+  "projectOwner": "GeraAlcantara",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
